@@ -1,5 +1,7 @@
 package com.example.jugmqtt
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,6 +19,14 @@ import androidx.navigation.compose.rememberNavController
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val intent = Intent(this, MqttService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent)
+        } else {
+            startService(intent)
+        }
+
         setContent {
             AppNavigation()
         }
@@ -35,60 +45,17 @@ fun AppNavigation() {
         // Маршрут для главного экрана
         composable("home") {
             HomeScreen(
-                onNavigateToDetails = { navController.navigate("details") }
+                onNavigateToDetails = { navController.navigate("settings") }
             )
         }
 
         // Маршрут для второго экрана
-        composable("details") {
-            DetailsScreen(
+        composable("settings") {
+            SettingsScreen(
                 onNavigateBack = { navController.popBackStack() }
             )
         }
     }
 }
 
-// 2. Первый экран
-@Composable
-fun HomeScreen(onNavigateToDetails: () -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "Главный экран", style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onNavigateToDetails) {
-            Text(text = "Перейти ко второму экрану")
-        }
-    }
-}
 
-// 3. Второй экран
-@Composable
-fun DetailsScreen(onNavigateBack: () -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "Второй экран", style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onNavigateBack) {
-            Text(text = "Вернуться назад")
-        }
-    }
-}
-
-// 4. Превью для удобной верстки каждого экрана отдельно
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    HomeScreen(onNavigateToDetails = {})
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DetailsScreenPreview() {
-    DetailsScreen(onNavigateBack = {})
-}

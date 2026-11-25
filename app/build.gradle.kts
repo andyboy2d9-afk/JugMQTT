@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.androidx.annotation.keep)
+    //id("androidx.annotation.keep")
+
 }
 
 android {
@@ -34,6 +37,15 @@ android {
     buildFeatures {
         compose = true
     }
+
+    packaging {
+        resources {
+            excludes += listOf(
+                "META-INF/INDEX.LIST",
+                "META-INF/io.netty.versions.properties"
+            )
+        }
+    }
 }
 
 dependencies {
@@ -44,9 +56,16 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.keep)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
     implementation("androidx.navigation:navigation-compose:2.10.2")
+    //implementation("androidx.compose.material:material-icons-core")
+
+    // MQTT клиент от HiveMQ
+    implementation("com.hivemq:hivemq-mqtt-client:1.3.3")
+    // Для работы viewModel() в Compose
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
